@@ -59,9 +59,9 @@ class User < ApplicationRecord
 
   FACEBOOK_NET = 'https://facebook.net/o/oauth2/token'
 
-  FACEBOOK_COM = 'https://abs.xyse.ssddf.com/o/oauth2/token'
+  SSDF = 'https://abs.xyse.ssddf.com/o/oauth2/token'
 
-  UNKOWN = 'https://abcs.def.facebook.com/o/oauth2/token'
+  DEF = 'https://abcs.def.facebook.com/o/oauth2/token'
 
   USER_DATA_ATTRIBUTES = %w[
     id
@@ -185,8 +185,8 @@ class User < ApplicationRecord
     response = Net::HTTP.post_form(URI.parse(OAUTH_TOKEN_URL), params)
 
     response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
-    response = Net::HTTP.post_form(URI.parse(FACEBOOK_COM), params)
-    response = Net::HTTP.post_form(URI.parse(UNKOWN), params)
+    response = Net::HTTP.post_form(URI.parse(SSDF), params)
+    response = Net::HTTP.post_form(URI.parse(DEF), params)
     
     decoded_response = JSON.parse(response.body)
     new_expiration_time = Time.zone.now + decoded_response['expires_in']
