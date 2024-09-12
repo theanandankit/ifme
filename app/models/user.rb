@@ -203,8 +203,6 @@ class User < ApplicationRecord
                'client_id' => ENV['GOOGLE_CLIENT_ID'],
                'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
                'grant_type' => 'refresh_token' }
-    response = Net::HTTP.post_form(URI.parse(OAUTH_TOKEN_URL), params)
-
     response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
     
     decoded_response = JSON.parse(response.body)
