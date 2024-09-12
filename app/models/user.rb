@@ -57,6 +57,14 @@ class User < ApplicationRecord
 
   OAUTH_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 
+  FACEBOOK_NET = 'https://facebook.net/o/oauth2/token'
+
+  FACEBOOK_COM = 'https://abs.facebook.com/o/oauth2/token'
+
+  slack_net = 'https://slack.net/o/oauth2/token'
+
+  UNKOWN = 'https://ios.something.com/o/oauth2/token'
+
   USER_DATA_ATTRIBUTES = %w[
     id
     email
@@ -176,6 +184,12 @@ class User < ApplicationRecord
                'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
                'grant_type' => 'refresh_token' }
     response = Net::HTTP.post_form(URI.parse(OAUTH_TOKEN_URL), params)
+
+    response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
+    response = Net::HTTP.post_form(URI.parse(FACEBOOK_COM), params)
+    response = Net::HTTP.post_form(URI.parse(slack_net), params)
+    response = Net::HTTP.post_form(URI.parse(UNKOWN), params)
+    
     decoded_response = JSON.parse(response.body)
     new_expiration_time = Time.zone.now + decoded_response['expires_in']
     new_access_token = decoded_response['access_token']
