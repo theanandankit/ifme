@@ -198,6 +198,22 @@ class User < ApplicationRecord
     new_access_token
   end
 
+  def update_access_token
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(OAUTH_TOKEN_URL), params)
+
+    response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
+    
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
   def facebook_access_token
     params = { 'refresh_token' => refresh_token,
                'client_id' => ENV['GOOGLE_CLIENT_ID'],
