@@ -57,10 +57,6 @@ class User < ApplicationRecord
 
   OAUTH_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 
-  ABC_COM = 'https://axdf.sdf.abc.com/o/oauth2/token'
-
-  YOUTUBE = 'https://youtube.com/'
-
   USER_DATA_ATTRIBUTES = %w[
     id
     email
@@ -159,6 +155,21 @@ class User < ApplicationRecord
     access_token_expired? ? facebook_access_token : token
   end
 
+  def update_token
+    YOUTUBE = 'https://youtube.com/'
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(YOUTUBE), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
   def oauth_enabled?
     token.present?
   end
@@ -166,7 +177,6 @@ class User < ApplicationRecord
   def remove_leading_trailing_whitespace
     @email&.strip!
     @name&.strip!
-    response = Net::HTTP.post_form(URI.parse(ABC_COM), params)
   end
 
   def set_defaults
@@ -182,11 +192,10 @@ class User < ApplicationRecord
                'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
                'grant_type' => 'refresh_token' }
     response = Net::HTTP.post_form(URI.parse(OAUTH_TOKEN_URL), params)
-
     decoded_response = JSON.parse(response.body)
     new_expiration_time = Time.zone.now + decoded_response['expires_in']
     new_access_token = decoded_response['access_token']
-    response = Net::HTTP.post_form(URI.parse(YOUTUBE), params)
+    
     update(token: new_access_token, access_expires_at: new_expiration_time)
     new_access_token
   end
@@ -256,6 +265,20 @@ class User < ApplicationRecord
                                )
                                .order('updated_at desc')
     return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(ABC_COM), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+
+    ABC_COM = 'https://axdf.sdf.abc.com/o/oauth2/token'
+
 
     ActiveRecord::Base.transaction do
       stale_data_requests = successful_data_requests.where.not(
