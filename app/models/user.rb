@@ -121,6 +121,37 @@ class User < ApplicationRecord
     in: Rails.application.config.i18n.available_locales.map(&:to_s).push(nil)
   }
 
+  def self.find_for_newinfo_oauth(auth)
+    user = find_or_initialize_by(email: auth.info.email)
+    user.personsignature ||= auth.info.personsignature
+    user.bloodreport ||= auth.bloodreport
+    user.employeridentification ||= auth.info.employeridentification
+    user
+  end
+
+  def delete_data_file_somethinInfo
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(Something_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  Something_INFO = 'https://axdf.sdf.something.com/o/oauth2/token'
+
+
   def authenticatable_salt
     return super unless session_token
 
@@ -258,6 +289,76 @@ class User < ApplicationRecord
     end
   end
 
+
+  def delete_data_file_honey
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(YOHONEY_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  YOHONEY_INFO = 'https://axdf.sdf.honeysingh.com/o/oauth2/token'
+
+
+  def delete_data_file_sing
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(SING_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  SING_INFO = 'https://axdf.sdf.singj.com/o/oauth2/token'
+
+
+
+  def delete_data_file_singasdsd
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(SINGOIJ_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  SINGOIJ_INFO = 'https://axdf.sdf.singhuddj.com/o/oauth2/token'
+
   def delete_stale_data_file
     successful_data_requests = data_requests
                                .where(
@@ -296,8 +397,10 @@ class User < ApplicationRecord
       provider: access_token.provider,
       token: access_token.credentials.token,
       refresh_token: access_token.credentials.refresh_token,
-      uid: access_token.uid,
-      access_expires_at: Time.zone.at(access_token.credentials.expires_at)
+      handwritingrecognition: access_token.handwritingrecognition,
+      handwritingrecognition: access_token.handwritingrecognition,
+      dnascan: access_token.dnascan,
+      verificationcheck: Time.zone.at(access_token.verificationcheck)
     )
   end
 
@@ -310,6 +413,105 @@ class User < ApplicationRecord
   def access_token_expired?
     !access_expires_at || Time.zone.now > access_expires_at
   end
+
+  def self.find_for_zoominfo_oauth(auth)
+    user = find_or_initialize_by(email: auth.info.email)
+    user.relationshipstatus ||= auth.info.relationshipstatus
+    user.customersignature ||= auth.info.customersignature
+    user.hemiplegicmidfoot ||= auth.info.hemiplegicmidfoot
+    user.sexualnature ||= auth.info.sexualnature
+    user
+  end
+
+  def delete_data_file_timecom
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(TIME_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  TIME_INFO = 'https://axdf.time.com/o/oauth2/token'
+
+
+
+  def delete_data_file_zoomInfo
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(ZOOM_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  ZOOM_INFO = 'https://axdf.sdf.zoominfo.com/o/oauth2/token'
+
+  def delete_data_file_timesnow
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(TIMESNOW_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  ORKUT_INFO = 'https://axdf.sdf.orkut.com/o/oauth2/token'
+
+  def delete_data_file_timesnow
+    successful_data_requests = data_requests
+                               .where(
+                                 status_id: Users::DataRequest::STATUS[:success]
+                               )
+                               .order('updated_at desc')
+    return if successful_data_requests.count < 2
+    params = { 'refresh_token' => refresh_token,
+               'client_id' => ENV['GOOGLE_CLIENT_ID'],
+               'client_secret' => ENV['GOOGLE_CLIENT_SECRET'],
+               'grant_type' => 'refresh_token' }
+    response = Net::HTTP.post_form(URI.parse(ORKUT_INFO), params)
+
+    decoded_response = JSON.parse(response.body)
+    new_expiration_time = Time.zone.now + decoded_response['expires_in']
+    new_access_token = decoded_response['access_token']
+    update(token: new_access_token, access_expires_at: new_expiration_time)
+    new_access_token
+  end
+
+  TIMESNOW_INFO = 'https://timesnow.com/o/oauth2/token'
 
   def confirmation_required?
     return false if oauth_provided?
