@@ -28,4 +28,5 @@ jobs:
     - name: Run Privado Scanner
       run: |
         env | grep "PRIVADO_" > $GITHUB_WORKSPACE/.privado.env
+        env
         docker run -t -v $GITHUB_WORKSPACE:/privado --env-file $GITHUB_WORKSPACE/.privado.env --privileged --pull=always $PRIVADO_DOCKER_IMAGE
